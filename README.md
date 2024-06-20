@@ -4,7 +4,7 @@ This is a higly scalable backend server. The backend server is made in order to 
 
 This backend server suppors custom routes with schema validation for bulletproof backend.
 
-Author: [@TheShiveshNetwork]('https://github.com/TheShiveshNetwork')
+Author: [@TheShiveshNetwork](https://github.com/TheShiveshNetwork)
 
 ## Tech Stack
 
