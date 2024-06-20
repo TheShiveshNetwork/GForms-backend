@@ -23,6 +23,7 @@ export type SubmitFormRequest = z.infer<typeof SubmitFormSchemaValidator>;
 
 export let CreateFormSchemaValidator = z.object({
 	body: z.object({
+		title: z.string(),
 		fields: z.array(z.string()),
 	})
 })
