@@ -5,6 +5,7 @@ import { CreateFormRequest, CreateFormSchemaValidator, GetFormByIdRequest, GetFo
 import { z } from "zod";
 import CreateForm from "../models/CreateForm";
 import { ObjectId } from "mongodb";
+import * as fs from "fs"
 
 class ControllerClass {
     private mongoClient = new MongoDBClient;
@@ -14,12 +15,48 @@ class ControllerClass {
         this.mongoClient.init();
     }
 
+    async ping(request:Request, response:Response) {
+        response.status(201).json({ message: true });
+    }
+
+    async submit(request:Request, response:Response) {
+        const filePath = './docs/forms.json';
+        const prevJsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        prevJsonData.push(request.body);
+
+        fs.writeFileSync(filePath, JSON.stringify(prevJsonData, null, 2));
+        response.status(201).json({ status: "Successful" })
+    }
+
+    async read(request:Request, response:Response) {
+        const index = parseInt(request.query.index as string, 10) || 0;
+        const filePath = './docs/forms.json';
+        const result = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (!index) {
+            response.status(400).json({message: "Please pass index"});
+        }
+        if (index < 0 || index >= result.length) {
+            response.status(400).json({message: "Index out of bound"});
+        }
+        response.status(201).json(result[index]);
+    }
+
+    // Extra controllers with validators
     async getAllForms(request:Request, response:Response) {
         const result = await this.mongoClient.getCollection('forms').find().toArray();
         if (result) {
             response.status(201).json(result);
         } else {
             response.status(404).json({ message: "No forms found" });
+        }
+    }
+
+    async getAllResponses(request:Request, response:Response) {
+        const result = await this.mongoClient.getCollection('responses').find().toArray();
+        if (result) {
+            response.status(201).json(result);
+        } else {
+            response.status(404).json({ message: "No responses found" });
         }
     }
 
